@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define QUEUE 4
+
+typedef struct {
+    int *items;
+    int f, r;
+    int capacity;
+} queue;
+
+void initQueue(queue* q) {
+    q->capacity = QUEUE;
+    q->f = 0;
+    q->r = -1;
+
+    q->items = (int*) malloc(q->capacity * sizeof(int));
+}
+
+void insert(queue* q) {
+    if (q->r == q->capacity-1) {
+
+        printf("Reallocating queue. \n");
+        q->capacity *= 2;
+        q->items = (int*) realloc(q->items, q->capacity * sizeof(int));
+    }
+
+    int item;
+    printf("Enter element to be inserted: ");
+    scanf("%d", &item);
+    *(q->items + ++q->r) = item;
+}
+
+void delete(queue* q) {
+    if (q->f > q->r) {
+        printf("Queue underflow. \n");
+        return;
+    }
+
+    int minIdx = 0, min = *q->items, i;
+    for (i = q->f; i <= q->r; i++) {
+        if (*(q->items + i) < min) {
+            min = *(q->items + i);
+            minIdx = i;
+        }
+    }
+
+    for (i = minIdx; i < q->r; i++)
+        *(q->items + i) = *(q->items + i + 1);
+
+    q->r--;
+
+    printf("deleted %d \n", min);
+}
+
+
+void display(queue *q) {
+    if (q->f > q->r) {
+
+        printf("Queue undeflow. \n");
+        return;
+    }
+
+    int i;
+    for (i = q->f; i <= q->r; i++)
+        printf("%d ", *(q->items + i));
+    printf("\n");
+}
+
+void printMenu() {
+    printf("1. insert an element into queue \n");
+    printf("2. delete an element from queue \n");
+    printf("3. display queue element \n");
+    printf("4. exit \n");
+}
+
+int main() {
+    queue q;
+    initQueue(&q);
+
+    int exit = 1;
+    while (exit) {
+        printMenu();
+        printf("Enter your choice: ");
+        int ch;
+        scanf("%d", &ch);
+        switch(ch) {
+            case 1: insert(&q);
+                    display(&q);
+                    break;
+            case 2: delete(&q);
+                    display(&q);
+                    break;
+            case 3: display(&q);
+                    break;
+            case 4: exit = 0;
+                    break;
+            default:
+                    printf("Invalid choice. \n");
+        }
+    }
+    return 0;
+}

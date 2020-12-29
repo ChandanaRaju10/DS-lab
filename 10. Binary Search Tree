@@ -1,98 +1,117 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-struct NODE{
+
+struct NODE
+{
     int info;
     struct NODE* left;
     struct NODE* right;
 };
 typedef struct NODE* node;
-node insert(node R)
+
+node INSERT(node R)
 {
     int i;
-    char dir[5];
+    char dir[6];
     node NN=(node)malloc(sizeof(struct NODE));
-    printf("Enter info:");
+    printf("Enter the info to be inserted:");
     scanf("%d",&NN->info);
     NN->left=NN->right=NULL;
-    if(R==NULL){
-        printf("node inserted is the root\n");
+    if(R==NULL)
+    {
+        printf("New node inserted as the root\n");
         return NN;
     }
-    direct: printf("Enter Direction:");
+    direct: printf("Enter direction to insert:");
     scanf("%s",dir);
-    node CurNode=R,Prevnode=NULL;
-    for(i=0;i<st);i++){
-        Prevnode=CurNode;
-        if(CurNode==NULL) 
-        break;
-[i]=='L[i]=='l') CurNode=CurNode->left;
-        els[i]=='R[i]=='r') CurNode=CurNode->right;
-        else 
-        break;
+    node CN=R,PN=NULL;
+    for(i=0;i<strlen(dir);i++)
+    {
+        PN=CN;
+        if(CN==NULL) break;
+        if(dir[i]=='L' || dir[i]=='l') CN=CN->left;
+        else if(dir[i]=='R' || dir[i]=='r') CN=CN->right;
+        else break;
     }
-    if(i!=st) || CurNode!=NULL){
-        printf("INVALID\n");
+    if(i!=strlen(dir) || CN!=NULL)
+    {
+        printf("INVALID DIRECTION\n");
         goto direct;
     }
-    [i-1]=='L[i-1]=='l') Prevnode->left=NN; 
-    els[i-1]=='R[i-1]=='r') Prevnode->right=NN; 
-    printf("New node inserted\n");
+    if(dir[i-1]=='L' || dir[i-1]=='l')
+    PN->left=NN; 
+    else if(dir[i-1]=='R' || dir[i-1]=='r') 
+    PN->right=NN; 
+    printf("INSERTION SUCCESSFULL\n");
     return R;
 }
-void InOrder(node R)
-{
-    if(R==NULL) 
-    return;
-    InOrder(R->left);
-    printf("%d ",R->info);
-    InOrder(R->right);
-}
-void PostOrder(node R)
+
+void INORDER(node R)
 {
     if(R==NULL) return;
-    PostOrder(R->left);
-    PostOrder(R->right);
+    INORDER(R->left);
+    printf("%d ",R->info);
+    INORDER(R->right);
+}
+
+void PREORDER(node R)
+{
+    if(R==NULL) return;
+    printf("%d ",R->info);
+    PREORDER(R->left);
+    PREORDER(R->right);
+}
+
+void POSTORDER(node R)
+{
+    if(R==NULL) return;
+    POSTORDER(R->left);
+    POSTORDER(R->right);
     printf("%d ",R->info);
 }
-void PreOrder(node R)
+
+void DISPLAY(node R)
 {
     if(R==NULL)
-    return;
-    printf("%d ",R->info);
-    PreOrder(R->left);
-    PreOrder(R->right);
-}
-void display(node R){
-    if(R==NULL){
+    {
         printf("Tree is empty\n");
         return;
     }
-    printf("\nInOrder Traversal: "); InOrder(R);
-    printf("\nPostOrder Traversal: "); PostOrder(R);
-    printf("\nPreOrder Traversal: "); PreOrder(R);
+    printf("\nINORDER Traversal: "); 
+    INORDER(R);
+    printf("\nPREORDER Traversal: "); 
+    PREORDER(R);
+    printf("\nPOSTORDER Traversal: "); 
+    POSTORDER(R);
     printf("\n");
 }
-node SearchNode(node R, int info,node* PN)
+
+node SEARCH(node R, int info,node* PN)
 {
-    if(R==NULL) 
-    return NULL;
+    if(R==NULL) return NULL;
     node NS=NULL;
-    if(R->info==info){
+    if(R->info==info)
+    {
         NS=R;
     }
-    if(NS==NULL){
+    if(NS==NULL)
+    {
         *PN=R;
-        NS=SearchNode(R->left,info,PN);
+        NS=SEARCH(R->left,info,PN);
     }
-    if(NS==NULL){
+    if(NS==NULL)
+    {
         *PN=R;
-        NS=SearchNode(R->right,info,PN);
+        NS=SEARCH(R->right,info,PN);
     }
     return NS;
 }
-node delete(node R){
-    if(R==NULL){
+
+node DELETE(node R)
+{
+    if(R==NULL)
+    {
         printf("Tree is empty\n");
         return NULL;
     }
@@ -101,51 +120,58 @@ node delete(node R){
     scanf("%d",&info);
     
     
-    if(R->info==info && (R->left!=NULL || R->right!=NULL)){
-        printf("INVALID.\n");
-        return R;
-    }
-    /*CASE 1: ROOT WITH NO CHILD*/
-    if(R->info==info && R->left==NULL && R->right==NULL){
+    /*ROOT WITH NO CHILDREN*/
+    if(R->info==info && R->left==NULL && R->right==NULL)
+    {
         printf("Deleted root node with info = %d\n",R->info);
         free(R);
         return NULL;
     }
     
     node PN;
-    node ND=SearchNode(R,info,&PN);
-    if(ND==NULL){
-        printf("INVALID.\n",info);
+    node ND=SEARCH(R,info,&PN);
+    if(ND==NULL)
+    {
+        printf("INVALID\n",info);
         return R;
-    }else{
-        printf("Deleted node info = %d and it's parent node info = %d\n",ND->info,PN->info);
     }
-    /*CASE 2: LEAF NODE*/
-    if(ND->left==NULL && ND->right==NULL){
+    else
+    {
+        printf("Deleting node info = %d and it's parent node info = %d\n",ND->info,PN->info);
+    }
+
+    /*LEAF NODE*/
+    if(ND->left==NULL && ND->right==NULL)
+    {
         if(ND==PN->left) PN->left=NULL;
         else PN->right=NULL;
         free(ND);
     }
-    /*CASE 3: NON-LEAF WITH A CHILD*/
+
+    /*NON-LEAF WITH ONE CHILD*/
     else if((ND->left!=NULL && ND->right==NULL)
-            ||(ND->left==NULL && ND->right!=NULL)){
-                /*LEFT CHILD*/
-                if(ND->right==NULL){
+            ||(ND->left==NULL && ND->right!=NULL))
+            {
+                
+                if(ND->right==NULL)              /*LEFT CHILD*/
+                {
                     if(ND==PN->left) PN->left=ND->left;
                     else PN->right=ND->left;
                 }
-                /*RIGHT CHILD*/ 
-                else{
-                    if(ND==PN->left) PN->left=ND->right;
+                
+                else
+                {
+                    if(ND==PN->left) PN->left=ND->right;     /*RIGHT CHILD*/
                     else PN->right=ND->right;
                 }
             free(ND);
         }
     
-    /*CASE 4: NON-LEAF WITH TWO CHILDREN*/
-    else{
+    /*NON-LEAF WITH TWO CHILDREN*/
+    else
+    {
         node IS=ND->right, ISP = ND;
-        //? IS= InOrder successor, ISP= InOrder successor's parent.
+        //? IS= INORDER successor, ISP= INORDER successor's parent.
         while(IS->left!=NULL){
             ISP=IS;
             IS=IS->left;
@@ -163,49 +189,83 @@ node delete(node R){
     printf("Node deleted with info: %d\n",info);
     return R;
 }
-int Height(node R){
+
+int HEIGHT(node R)
+{
     if(R==NULL) return 0;
     
-    int leftHeight=Height(R->left);
-    int rightHeight=Height(R->right);
-    if(leftHeight>rightHeight) return leftHeight+1;
+    int leftHeight=HEIGHT(R->left);
+    int rightHeight=HEIGHT(R->right);
+
+    if(leftHeight>rightHeight) 
+    return leftHeight+1;
     return rightHeight+1;
 }
 
-node createCopyOfTree(node R){
+node CREATECOPY(node R)
+{
     if(R==NULL) return NULL;
     node temp=(node)malloc(sizeof(struct NODE));
     temp=R;
-    temp->left=createCopyOfTree(R->left);
-    temp->right=createCopyOfTree(R->right);
+    temp->left=CREATECOPY(R->left);
+    temp->right=CREATECOPY(R->right);
     temp->info=R->info;
     return temp;
 }
 
-int main(){
+int main()
+{
     int choice,info;
     node root=NULL;
     node NS=NULL;
     node PN=NULL;
-    while(1){
-        
-        printf("\n0.Exit\n1.Insert Node \n2.Display Tree\n3.Search Node\n4.Delete Node\n5.Find height of the tree\n6.Create a copy of tree\nEnter your choice:");
+    while(1)
+    {
+        printf("1.Insert a node\n");
+        printf("2.Display tree\n");
+        printf("3.Search a node\n");
+        printf("4.Delete a node\n");
+        printf("5.Find height of the tree\n");
+        printf("6.Create a copy of tree\n");
+        printf("7.Exit\n");
+        printf("Enter your choice:");
         scanf("%d",&choice);
 
         switch(choice)
         {
-                    int main(){
+            
+            case 1: root=INSERT(root); break;
+            case 2: DISPLAY(root); break;
+            case 3: printf("Enter the info of the node to be searched:");
+                    scanf("%d",&info);
+                    if(root==NULL){
+                        printf("Tree is empty\n");
+                    }else if(root->info==info){
+                        printf("Searching node info = %d and it is the root of the tree\n",root->info);
+                    }else{
+                        NS=SEARCH(root,info,&PN);
+                        if(NS==NULL){
+                            printf("Node with info = %d doesn't exist in the tree\n",info);
+                        }else{
+                        printf("Searching node info = %d and it's parent node info = %d\n",NS->info,PN->info);
+                        }
+                    }
                     break;
-            case 5: printf("Height of the tree: %d\n",Height(root));
+            case 4: root = DELETE(root);
+                    DISPLAY(root);
+                    break;
+            case 5: printf("Height of the tree: %d\n",HEIGHT(root));
                     break;
             case 6: if(root==NULL){
                         printf("Tree is empty\n");
                     }else {
-                        node copy = createCopyOfTree(root);
+                        node copy = CREATECOPY(root);
                         printf("Copy of the tree created:\n");
-                        display(copy);
+                        DISPLAY(copy);
                     }
+            case 7: exit(0);
                     break;
             default: printf("INVALID CHOICE");
         }
     }
+}

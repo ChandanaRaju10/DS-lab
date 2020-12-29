@@ -100,7 +100,7 @@ node delete(node R){
     printf("Enter the info of the node to be deleted:");
     scanf("%d",&info);
     
-    //* If the node to be deleted is the root and has children.
+    
     if(R->info==info && (R->left!=NULL || R->right!=NULL)){
         printf("INVALID.\n");
         return R;

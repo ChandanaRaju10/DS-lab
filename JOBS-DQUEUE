@@ -1,0 +1,112 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct JOBS{
+    int id;
+    char name[20];
+   ;
+};
+typedef struct JOBS jobs;
+
+struct QUEUE{
+    jobs items[5];
+    int front,rear;
+};
+typedef struct QUEUE queue;
+
+queue insertfront(queue Q){
+    if(Q.rear==4){
+        printf("Queue is full\n");
+        
+    }
+    {
+        jobs J;
+        printf("Enter the new job details:");
+        scanf("%d%s",&J.id,J.name);
+        if(Q.front==0){
+            *(Q.items + ++Q.rear)=J;
+        }else{
+            *(Q.items + --Q.front)=J;
+        }
+        printf("Job inserted\n");
+    }
+    return Q;
+}
+
+queue deletefront(queue Q){
+    if(Q.front>Q.rear){
+        printf("Queue is empty\n");
+        
+    };
+    jobs J=*(Q.items + Q.front++);
+
+        printf("Dequeued job-\nid: %d\nName: %s\n",J.id,J.name);
+        if(Q.front>Q.rear){
+            Q.front=0;
+            Q.rear=-1;
+        }
+    
+    
+}
+
+queue insertrear(queue Q){
+    if(Q.rear==4){
+        printf("Queue is full\n");
+    }else{
+        jobs J;
+        printf("Enter the new job details:");
+        scanf("%d%s",&J.id,J.name);
+        Q.items[++Q.rear]=J;
+        printf("Job inserted\n");
+    }
+    return Q;
+}
+
+queue deleterear(queue Q){
+    if(Q.front>Q.rear){
+        printf("queue is empty\n");
+        
+    }
+    jobs J=*(Q.items + Q.rear--);
+    printf("Deleted job-\nid: %d\nName: %s\n",J.id,J.name);
+    if(Q.front > Q.rear){
+        Q.front=0;
+        Q.rear=-1;
+    }
+
+}
+
+void displayqueue(queue Q){
+     if(Q.front>Q.rear){
+        printf("Queue is empty\n");
+    }else{
+        printf("Queue jobs:\n");
+        printf("id \tName \n");
+        printf("___________________________\n");
+        for(int i=Q.front;i<=Q.rear;i++){
+            printf("%d\t%s\t\n",Q.items[i].id,Q.items[i].name);
+        }
+        printf("\n");
+    }
+}
+
+int main(){
+    int choice;
+    queue Q;
+    Q.front=0;Q.rear=-1;
+    while(1){
+        printf("\n0.Exit\n1.insertfront\n2.insertrear\n3.deletefront\n4.deleterear\n5.display\nEnter your choice:");
+		scanf("%d", &choice);
+        
+        switch(choice){
+            case 0: exit(0); break;
+            case 1: Q=insertfront(Q); break;
+            case 2: Q=insertrear(Q); break;
+            case 3: Q=deletefront(Q); break;
+            case 4: Q=deleterear(Q); break;
+            case 5: displayqueue(Q); break;
+            default: printf("INVALID\n");
+        }
+    }
+    return 0;
+}

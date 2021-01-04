@@ -1,10 +1,12 @@
+#include <stdio.h>
+
 #include<stdio.h>
 #include<stdlib.h>
 
 struct JOBS{
     int id;
     char name[20];
-   ;
+    int Time;
 };
 typedef struct JOBS jobs;
 
@@ -21,8 +23,14 @@ queue insertfront(queue Q){
     }
     {
         jobs J;
-        printf("Enter the new job details:");
-        scanf("%d%s",&J.id,J.name);
+        printf("Enter the new job details\n");
+	printf("Enter Job ID: ");
+	scanf("%d",&J.id);
+	printf("Enter Job Name: ");
+	scanf("%s",J.name);
+	printf("Enter time required to finish the job in hour(s): ");
+	scanf("%d",&J.Time);
+        
         if(Q.front==0){
             *(Q.items + ++Q.rear)=J;
         }else{
@@ -40,7 +48,7 @@ queue deletefront(queue Q){
     };
     jobs J=*(Q.items + Q.front++);
 
-        printf("Dequeued job-\nid: %d\nName: %s\n",J.id,J.name);
+        printf("Dequeued job-\nid: %d\nName: %s\nTime: %d\n",J.id,J.name,J.Time);
         if(Q.front>Q.rear){
             Q.front=0;
             Q.rear=-1;
@@ -55,7 +63,11 @@ queue insertrear(queue Q){
     }else{
         jobs J;
         printf("Enter the new job details:");
-        scanf("%d%s",&J.id,J.name);
+	printf("Enter Job ID: \n");
+	scanf("%d",&J.id);
+	printf("Enter Job Name: \n");
+	scanf("%s",J.name);
+	printf("%d",&J.Time);
         Q.items[++Q.rear]=J;
         printf("Job inserted\n");
     }
@@ -68,7 +80,7 @@ queue deleterear(queue Q){
         
     }
     jobs J=*(Q.items + Q.rear--);
-    printf("Deleted job-\nid: %d\nName: %s\n",J.id,J.name);
+    printf("Deleted job-\nid: %d\nName: %s\nTime: %d\n",J.id,J.name,J.Time);
     if(Q.front > Q.rear){
         Q.front=0;
         Q.rear=-1;
@@ -81,10 +93,10 @@ void displayqueue(queue Q){
         printf("Queue is empty\n");
     }else{
         printf("Queue jobs:\n");
-        printf("id \tName \n");
+        printf("id \tName \tTime \n");
         printf("___________________________\n");
         for(int i=Q.front;i<=Q.rear;i++){
-            printf("%d\t%s\t\n",Q.items[i].id,Q.items[i].name);
+            printf("%d\t%s\t%d\n",Q.items[i].id,Q.items[i].name,Q.items[i].Time);
         }
         printf("\n");
     }

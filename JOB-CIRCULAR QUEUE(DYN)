@@ -76,11 +76,11 @@ void display(CircularQueue* q) {
     }
 
     int i;
+    printf("Queue jobs:\n");
+    printf("id \tName \tTime \n");
+    printf("___\n");
     for (i = 0; i < q->size; i++) {
         jobs J=*(q->items + ((q->fidx + i) % q->capacity));
-         printf("Queue jobs:\n");
-        printf("id \tName \tTime \n");
-        printf("___________________________\n");
         printf(" %d\t%s\t%d\t\n",J.id,J.name,J.time);
     }
     printf("\n");

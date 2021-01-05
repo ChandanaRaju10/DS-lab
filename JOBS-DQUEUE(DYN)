@@ -1,0 +1,112 @@
+#include<stdio.h>
+#include<stdlib.h>
+int size;
+struct Queue
+{	
+	int *Jobids;
+    char *Jobname[20];
+    char *time[20];
+	int f, r;
+};
+typedef struct Queue QUE;
+void InsertRear(QUE *);
+void DeleteFront(QUE *);
+void InsertFront(QUE *);
+void DeleteRear(QUE *);
+void Disp(QUE *);
+void main( )
+{
+	int ch;
+	QUE Q;
+	Q.f = 0; Q.r = -1;
+	printf("Enter the size of the queue\n");
+	scanf("%d",&size);
+	Q.Jobids=(int*)malloc(size*sizeof(int));
+	for( ; ; )
+	{
+		printf("\nEnter choice : \n1:InsertFront\n2:InsertRear\n3:DeleteFront\n4:DeleteRear\n5:Display\n6:Exit\n");
+		scanf("%d", &ch);
+		switch(ch)
+		{
+			case 1: InsertFront(&Q); Disp(&Q); break;
+			case 2: InsertRear(&Q);Disp(&Q);break;
+			case 3: DeleteFront(&Q);Disp(&Q);break;
+			case 4: DeleteRear(&Q);Disp(&Q);break;
+			case 5: Disp(&Q);break;
+			case 6: exit(0);
+		}
+	}
+}
+void InsertRear( QUE *Q)
+{
+	int id; 
+    char name[20];
+    char time[20];
+	if(Q->r==size-1)
+	{	
+		printf("Queue full\n");3
+		printf("Reallocating queue by doubling the size\n");
+		Q->Jobids=(int*)realloc(Q->Jobids,size*2);
+	}
+	printf("Enter id : ");
+	scanf("%d", &id);
+    printf("Enter name : ");
+	scanf("%s", name);
+    printf("Enter time : ");
+	scanf("%s", time);
+	Q->r++;
+	*(Q->Jobids+Q->r) = id;
+}
+void DeleteFront(QUE *Q)
+{
+	if(Q->f>Q->r)
+	{	
+		printf("Queue Empty\n");
+		return;
+	}
+	printf("deleted %d\n", *(Q->Jobids+Q->f++));
+}
+void InsertFront(QUE *Q)
+{	
+	int id;
+    char name[20];
+    char time[20];
+	if(Q->f==0 && Q->r==size-1)
+	{	printf("Queue Full\n");
+		printf("Reallocating queue by doubling the size\n");
+		Q->Jobids=(int*)realloc(Q->Jobids,size*2);
+	}
+	printf("Enter id : ");
+	scanf("%d", &id);
+    printf("Enter name : ");
+	scanf("%s", name);
+    printf("Enter time : ");
+	scanf("%s", time);
+	if(Q->f>Q->r)
+		*(Q->Jobids + ++Q->r)=id;
+	else
+	if(Q->f>0)
+		*(Q->Jobids + --Q->f)=id;
+	else
+		printf("Front Insertion is not possible\n");
+}
+void DeleteRear(QUE *Q)
+{
+	if(Q->f>Q->r)
+	{	printf("Queue Empty\n");
+		return;
+	}
+	printf("Deleted %d\n",*(Q->Jobids+Q->r--));
+}		
+void Disp(QUE *Q)
+{	int i;
+	if(Q->f>Q->r)
+	{	printf("Queue Empty\n");
+		return;
+	}
+	for(i=Q->f; i<=Q->r; i++)
+		printf("id-%d  ", *(Q->Jobids+i));
+		printf("name-%s ", *(Q->Jobname+i);
+		printf("time-%s ", *(Q->time+i));
+
+}

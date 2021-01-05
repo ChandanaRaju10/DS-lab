@@ -1,88 +1,123 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-int SIZE= 2;
+#define QUEUE_INIT_CAPACITY 10
 
-struct JOBS{
+typedef struct {
     int id;
     char name[20];
-    int Time;
-};
-typedef struct JOBS jobs;
+    int time;
+} jobs;
 
-struct QUEUE{
-    int *items;
-    int front,rear;
-    int count;
-};
-typedef struct QUEUE* queue;
+typedef struct {
+    jobs* items;
+    int fidx, ridx;
+    int size;
+    int capacity;
+} CircularQueue;
 
-queue enqueue(queue Q)
+void initQueue(CircularQueue* q) {
+    q->capacity = QUEUE_INIT_CAPACITY;
+    q->fidx = 0;
+    q->ridx = -1;
+    q->size = 0;
 
-{
-    if(Q->count==SIZE){
-        SIZE*=2;
-        Q->items=(int*)realloc(Q->items,SIZE*sizeof(int));
-        printf("Reallocated the queue size\n");
-    }
-    jobs J;
-    printf("Enter Job Details\n");
-            printf("Enter Job ID: ");
-            scanf("%d",&J.id);
-            printf("Enter Job Name: ");
-            scanf("%s",J.name);
-            printf("Enter Time required to complete the job in hour(s): ");
-            scanf("%d",&J.Time);
-            
-    Q->rear=(Q->rear+1)%SIZE;
-    
-    Q->count++;
-    printf("Job enqueued\n");
-    return Q;
+    q->items = (jobs*) malloc(q->capacity * sizeof(jobs*));
 }
 
-queue dequeue(queue Q){
-    if(Q->count==0){
+void deleteQueue(CircularQueue *q) {
+    free(q->items);
+}
+
+void enqueue(CircularQueue* q) {
+    if (q->size == q->capacity) {
+        printf("Reallocating queue. \n");
+        q->capacity *= 2;
+        q->items = (jobs*) realloc(q->items, q->capacity * sizeof(jobs));
+    }
+
+   jobs J;
+        printf("Enter the new job details\n"); 
+        printf("Enter job id:");
+        scanf("%d",&J.id);
+        printf("Enter job name:");
+        scanf("%s",J.name);
+        printf("Enter time required to complete job:");
+        scanf("%d",&J.time);
+        q->items[++q->ridx]=J;
+        printf("Job enqueued\n");
+    q->size++;
+}
+
+void dequeue(CircularQueue* q) {
+    if (q->size == 0) {
+        printf("Queue is empty. \n");
+        return;
+    }
+
+    if(q->fidx>q->ridx){
         printf("Queue is empty\n");
-    }else
-    {jobs J;
-        printf("Dequeued job-\nid: %d\nName: %s\nTime: %d\n",J.id,J.name,J.Time);
-        Q->front=(Q->front+1)%SIZE;
-        Q->count--;
-    }
-    return Q;
-}
-
-void displayQueue(queue Q){
-     if(Q->front>Q->rear){
-        printf("Queue is empty\n");
-    }else{
-        printf("Queue jobs:\n");
-        printf("id \tName \tTime \n");
-        printf("_________\n");
-        for(int i=Q->front;i<=Q->rear;i++){
-            printf("%d\t%s\t%d\t\n",Q->items[i].id,Q->items[i].name,Q->items[i].Time);
-        }
-        printf("\n");
-    }
-}
-
-int main(){
-    int choice;
-    queue Q = (queue)malloc(sizeof(struct QUEUE));
-    Q->items = (int*)malloc(SIZE*sizeof(int));
-    Q->front=0;Q->rear=-1,Q->count=0;
-    while(1){
-        printf("\n0.Exit\n1.Enqueue\n2.Dequeue\n3.Display Queue\nEnter your choice:");
-		scanf("%d", &choice);
         
-        switch(choice){
-            case 0: exit(0); break;
-            case 1: Q=enqueue(Q); break;
-            case 2: Q=dequeue(Q); break;
-            case 3: displayQueue(Q); break;
-            default: printf("Enter proper choice\n");
+    };
+    jobs J=*(q->items + q->fidx++);
+
+        printf("Dequeued job-\nid: %d\nName: %s\nTime: %d\n",J.id,J.name,J.time);
+        if(q->fidx>q->ridx){
+            q->fidx=0;
+            q->ridx=-1;
+        }
+    q->size--;
+}
+
+void display(CircularQueue* q) {
+    if (q->size == 0) {
+        printf("Queue is empty. \n");
+        return;
+    }
+
+    int i;
+    for (i = 0; i < q->size; i++) {
+        jobs J=*(q->items + ((q->fidx + i) % q->capacity));
+         printf("Queue jobs:\n");
+        printf("id \tName \tTime \n");
+        printf("___________________________\n");
+        printf(" %d\t%s\t%d\t\n",J.id,J.name,J.time);
+    }
+    printf("\n");
+}
+
+void printMenu() {
+    printf("1. Enqueue \n");
+    printf("2. Dequeue \n");
+    printf("3. Display queue \n");
+    printf("4. Exit \n");
+}
+
+int main() {
+    CircularQueue q;
+    initQueue(&q);
+
+    int isRunning = 1;
+    while (isRunning) {
+        printMenu();
+        printf("Enter your choice: ");
+        int ch;
+        scanf("%d", &ch);
+        switch(ch) {
+            case 1: enqueue(&q);
+                    display(&q);
+                    break;
+            case 2: dequeue(&q);
+                    display(&q);
+                    break;
+            case 3: display(&q);
+                    break;
+            case 4: isRunning = 0;
+                    break;
+            default:
+                    printf("Invalid choice. \n");
         }
     }
+    deleteQueue(&q);
     return 0;
 }

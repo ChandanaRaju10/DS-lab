@@ -1,0 +1,88 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int SIZE= 2;
+
+struct JOBS{
+    int id;
+    char name[20];
+    int Time;
+};
+typedef struct JOBS jobs;
+
+struct QUEUE{
+    int *items;
+    int front,rear;
+    int count;
+};
+typedef struct QUEUE* queue;
+
+queue enqueue(queue Q)
+
+{
+    if(Q->count==SIZE){
+        SIZE*=2;
+        Q->items=(int*)realloc(Q->items,SIZE*sizeof(int));
+        printf("Reallocated the queue size\n");
+    }
+    jobs J;
+    printf("Enter Job Details\n");
+            printf("Enter Job ID: ");
+            scanf("%d",&J.id);
+            printf("Enter Job Name: ");
+            scanf("%s",J.name);
+            printf("Enter Time required to complete the job in hour(s): ");
+            scanf("%d",&J.Time);
+            
+    Q->rear=(Q->rear+1)%SIZE;
+    
+    Q->count++;
+    printf("Job enqueued\n");
+    return Q;
+}
+
+queue dequeue(queue Q){
+    if(Q->count==0){
+        printf("Queue is empty\n");
+    }else
+    {jobs J;
+        printf("Dequeued job-\nid: %d\nName: %s\nTime: %d\n",J.id,J.name,J.Time);
+        Q->front=(Q->front+1)%SIZE;
+        Q->count--;
+    }
+    return Q;
+}
+
+void displayQueue(queue Q){
+     if(Q->front>Q->rear){
+        printf("Queue is empty\n");
+    }else{
+        printf("Queue jobs:\n");
+        printf("id \tName \tTime \n");
+        printf("_________\n");
+        for(int i=Q->front;i<=Q->rear;i++){
+            printf("%d\t%s\t%d\t\n",Q->items[i].id,Q->items[i].name,Q->items[i].Time);
+        }
+        printf("\n");
+    }
+}
+
+int main(){
+    int choice;
+    queue Q = (queue)malloc(sizeof(struct QUEUE));
+    Q->items = (int*)malloc(SIZE*sizeof(int));
+    Q->front=0;Q->rear=-1,Q->count=0;
+    while(1){
+        printf("\n0.Exit\n1.Enqueue\n2.Dequeue\n3.Display Queue\nEnter your choice:");
+		scanf("%d", &choice);
+        
+        switch(choice){
+            case 0: exit(0); break;
+            case 1: Q=enqueue(Q); break;
+            case 2: Q=dequeue(Q); break;
+            case 3: displayQueue(Q); break;
+            default: printf("Enter proper choice\n");
+        }
+    }
+    return 0;
+}

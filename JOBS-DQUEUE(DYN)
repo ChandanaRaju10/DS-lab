@@ -1,112 +1,153 @@
-#include<stdio.h>
-#include<stdlib.h>
-int size;
-struct Queue
-{	
-	int *Jobids;
-    char *Jobname[20];
-    char *time[20];
-	int f, r;
+#include <stdio.h>
+#include <stdlib.h>
+ struct Job
+{
+    int JobID;
+    char name[20];
+    int hrs;
 };
-typedef struct Queue QUE;
-void InsertRear(QUE *);
-void DeleteFront(QUE *);
-void InsertFront(QUE *);
-void DeleteRear(QUE *);
-void Disp(QUE *);
-void main( )
-{
-	int ch;
-	QUE Q;
-	Q.f = 0; Q.r = -1;
-	printf("Enter the size of the queue\n");
-	scanf("%d",&size);
-	Q.Jobids=(int*)malloc(size*sizeof(int));
-	for( ; ; )
-	{
-		printf("\nEnter choice : \n1:InsertFront\n2:InsertRear\n3:DeleteFront\n4:DeleteRear\n5:Display\n6:Exit\n");
-		scanf("%d", &ch);
-		switch(ch)
-		{
-			case 1: InsertFront(&Q); Disp(&Q); break;
-			case 2: InsertRear(&Q);Disp(&Q);break;
-			case 3: DeleteFront(&Q);Disp(&Q);break;
-			case 4: DeleteRear(&Q);Disp(&Q);break;
-			case 5: Disp(&Q);break;
-			case 6: exit(0);
-		}
-	}
-}
-void InsertRear( QUE *Q)
-{
-	int id; 
-    char name[20];
-    char time[20];
-	if(Q->r==size-1)
-	{	
-		printf("Queue full\n");3
-		printf("Reallocating queue by doubling the size\n");
-		Q->Jobids=(int*)realloc(Q->Jobids,size*2);
-	}
-	printf("Enter id : ");
-	scanf("%d", &id);
-    printf("Enter name : ");
-	scanf("%s", name);
-    printf("Enter time : ");
-	scanf("%s", time);
-	Q->r++;
-	*(Q->Jobids+Q->r) = id;
-}
-void DeleteFront(QUE *Q)
-{
-	if(Q->f>Q->r)
-	{	
-		printf("Queue Empty\n");
-		return;
-	}
-	printf("deleted %d\n", *(Q->Jobids+Q->f++));
-}
-void InsertFront(QUE *Q)
-{	
-	int id;
-    char name[20];
-    char time[20];
-	if(Q->f==0 && Q->r==size-1)
-	{	printf("Queue Full\n");
-		printf("Reallocating queue by doubling the size\n");
-		Q->Jobids=(int*)realloc(Q->Jobids,size*2);
-	}
-	printf("Enter id : ");
-	scanf("%d", &id);
-    printf("Enter name : ");
-	scanf("%s", name);
-    printf("Enter time : ");
-	scanf("%s", time);
-	if(Q->f>Q->r)
-		*(Q->Jobids + ++Q->r)=id;
-	else
-	if(Q->f>0)
-		*(Q->Jobids + --Q->f)=id;
-	else
-		printf("Front Insertion is not possible\n");
-}
-void DeleteRear(QUE *Q)
-{
-	if(Q->f>Q->r)
-	{	printf("Queue Empty\n");
-		return;
-	}
-	printf("Deleted %d\n",*(Q->Jobids+Q->r--));
-}		
-void Disp(QUE *Q)
-{	int i;
-	if(Q->f>Q->r)
-	{	printf("Queue Empty\n");
-		return;
-	}
-	for(i=Q->f; i<=Q->r; i++)
-		printf("id-%d  ", *(Q->Jobids+i));
-		printf("name-%s ", *(Q->Jobname+i);
-		printf("time-%s ", *(Q->time+i));
 
+typedef struct {
+    struct Job *items;
+    int fIdx, rIdx;
+    int capacity;
+} DEQueue;
+
+void initQueue(DEQueue* q) {
+    q->capacity = 10;
+    q->fIdx = 0;
+    q->rIdx = -1;
+
+    q->items = (struct Job*) malloc(q->capacity * sizeof(struct Job));
+}
+
+void deleteQueue(DEQueue* q) {
+    free(q->items);
+}
+
+void insertFront(DEQueue* q) {
+    if (q->fIdx <= q->rIdx && q->fIdx == 0) {
+        printf("This operation cannot be performed. \n");
+        return;
+    }
+
+    struct Job item;
+    printf("Enter id name and time of job to insert at front: ");
+    scanf("%d", &item.JobID);
+    fflush(stdin);
+    gets(item.name);
+    fflush(stdin);
+    scanf("%d",&item.hrs);
+    if (q->fIdx == 0) {
+        // Empty queue. Just rear insert
+        *(q->items + ++q->rIdx) = item;
+    } else {
+        *(q->items + --q->fIdx) = item;
+    }
+}
+
+void deleteFront(DEQueue* q) {
+    if (q->fIdx > q->rIdx) {
+        printf("Queue is empty. \n");
+        return;
+    }
+
+    struct Job item = *(q->items + q->fIdx++);
+    printf("Deleted from front.\nid: %d \nname: %s \nhrs: %d\n", item.JobID,item.name,item.hrs);
+
+    if (q->fIdx > q->rIdx) {
+        q->fIdx = 0;
+        q->rIdx = -1;
+    }
+}
+
+void insertRear(DEQueue* q) {
+    if (q->rIdx == q->capacity-1) {
+        // Queue is full
+        printf("Reallocating queue. \n");
+        q->capacity *= 2;
+        q->items = ( struct Job*)realloc(q->items, q->capacity * sizeof(struct Job));
+    }
+
+    struct Job item;
+    printf("Enter id name and time of job to insert at rear: ");
+    scanf("%d", &item.JobID);
+    fflush(stdin);
+    gets(item.name);
+    fflush(stdin);
+    scanf("%d",&item.hrs);
+    *(q->items + ++q->rIdx) = item;
+}
+
+void deleteRear(DEQueue* q) {
+    if (q->fIdx > q->rIdx) {
+        printf("Queue is empty. \n");
+        return;
+    }
+
+    struct Job item = *(q->items + q->rIdx--);
+    printf("Deleted from Rear.\nid: %d \nname: %s \nhrs: %d\n", item.JobID,item.name,item.hrs);
+
+    if (q->fIdx > q->rIdx) {
+        q->fIdx = 0;
+        q->rIdx = -1;
+    }
+}
+
+void display(DEQueue *q) {
+    if (q->fIdx > q->rIdx) {
+        // Queue is empty
+        printf("Queue is empty. \n");
+        return;
+    }
+
+    int i;
+    printf("\nID    name    Hrs\n");
+    for (i = q->fIdx; i <= q->rIdx; i++)
+        printf("%d  %s   %d \n", (q->items + i)->JobID,(q->items + i)->name,(q->items + i)->hrs);
+    printf("\n");
+}
+
+void printMenu() {
+    printf("1. InsertFront\n");
+    printf("2. DeleteFront\n");
+    printf("3. InsertRear\n");
+    printf("4. DeleteRear\n");
+    printf("5. Display\n");
+    printf("6. Exit\n");
+}
+
+int main() {
+    DEQueue q;
+    initQueue(&q);
+
+    int isRunning = 1;
+    while (isRunning) {
+        printMenu();
+        printf("Enter your choice: ");
+        int ch;
+        scanf("%d", &ch);
+        switch(ch) {
+            case 1: insertFront(&q);
+                    display(&q);
+                    break;
+            case 2: deleteFront(&q);
+                    display(&q);
+                    break;
+            case 3: insertRear(&q);
+                    display(&q);
+                    break;
+            case 4: deleteRear(&q);
+                    display(&q);
+                    break;
+            case 5: display(&q);
+                    break;
+            case 6: isRunning = 0;
+                    break;
+            default:
+                    printf("Invalid choice. \n");
+        }
+    }
+    deleteQueue(&q);
+    return 0;
 }
